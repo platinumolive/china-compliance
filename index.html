@@ -11,7 +11,6 @@
             padding: 0;
             background-color: #f5f5f7;
             color: #1d1d1f;
-            text-align: center;
         }
         header {
             background: linear-gradient(135deg, #0a84ff, #0056b3);
@@ -20,6 +19,18 @@
             padding: 80px 20px;
             font-size: 40px;
             font-weight: bold;
+            position: relative;
+        }
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .language-selector select {
+            font-size: 16px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
         .container {
             width: 80%;
@@ -33,6 +44,7 @@
             background: white;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease-in-out;
+            text-align: left;
         }
         .section:hover {
             transform: translateY(-5px);
@@ -57,18 +69,26 @@
 </head>
 <body>
     <header>
-        Your Trusted Partner for China Market Compliance & Supply Chain Solutions
+        <span id="title">Your Trusted Partner for China Market Compliance & Supply Chain Solutions</span>
+        <div class="language-selector">
+            <select id="language-select" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="zh">中文</option>
+                <option value="el">Ελληνικά</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
     </header>
     
     <div class="container">
         <div class="section">
-            <h2 style="font-size: 32px;">Why Choose Us?</h2>
-            <p style="font-size: 18px; line-height: 1.6;">We help European businesses navigate China’s regulatory landscape with ease, ensuring compliance and smooth market entry.</p>
+            <h2 id="why-title">Why Choose Us?</h2>
+            <p id="why-text">We help European businesses navigate China’s regulatory landscape with ease, ensuring compliance and smooth market entry.</p>
         </div>
         
         <div class="section">
-            <h2 style="font-size: 32px;">Our Services</h2>
-            <ul style="list-style: none; padding: 0; font-size: 18px; line-height: 2;">
+            <h2 id="services-title">Our Services</h2>
+            <ul id="services-list">
                 <li>✔️ Regulatory & Compliance Consulting</li>
                 <li>✔️ Supply Chain Solutions</li>
                 <li>✔️ Market Entry Strategy</li>
@@ -77,16 +97,60 @@
         </div>
         
         <div class="section">
-            <h2 style="font-size: 32px;">Legal & Regulatory Policies</h2>
-            <p style="font-size: 18px; line-height: 1.6;">Stay up to date with the latest regulations relevant to China market entry.</p>
-            <a href="laws.html" class="cta">View Regulations</a>
+            <h2 id="regulations-title">Legal & Regulatory Policies</h2>
+            <p id="regulations-text">Stay up to date with the latest regulations relevant to China market entry.</p>
+            <a href="laws.html" class="cta" id="regulations-link">View Regulations</a>
         </div>
         
         <div class="section">
-            <h2 style="font-size: 32px;">Contact Us</h2>
-            <p style="font-size: 18px; line-height: 1.6;">Get in touch for a consultation and start your journey into the Chinese market with confidence.</p>
-            <a href="#" class="cta">Get in Touch</a>
+            <h2 id="contact-title">Contact Us</h2>
+            <p id="contact-text">Get in touch for a consultation and start your journey into the Chinese market with confidence.</p>
+            <a href="#" class="cta" id="contact-link">Get in Touch</a>
         </div>
     </div>
+
+    <script>
+        const translations = {
+            "en": {
+                "title": "Your Trusted Partner for China Market Compliance & Supply Chain Solutions",
+                "why-title": "Why Choose Us?",
+                "why-text": "We help European businesses navigate China’s regulatory landscape with ease, ensuring compliance and smooth market entry.",
+                "services-title": "Our Services",
+                "services-list": ["✔️ Regulatory & Compliance Consulting", "✔️ Supply Chain Solutions", "✔️ Market Entry Strategy", "✔️ Customized Business Advisory"],
+                "regulations-title": "Legal & Regulatory Policies",
+                "regulations-text": "Stay up to date with the latest regulations relevant to China market entry.",
+                "regulations-link": "View Regulations",
+                "contact-title": "Contact Us",
+                "contact-text": "Get in touch for a consultation and start your journey into the Chinese market with confidence.",
+                "contact-link": "Get in Touch"
+            },
+            "zh": {
+                "title": "您值得信赖的中国市场合规与供应链解决方案合作伙伴",
+                "why-title": "为什么选择我们？",
+                "why-text": "我们帮助欧洲企业轻松应对中国的监管环境，确保合规并顺利进入市场。",
+                "services-title": "我们的服务",
+                "services-list": ["✔️ 监管与合规咨询", "✔️ 供应链解决方案", "✔️ 市场进入策略", "✔️ 定制业务咨询"],
+                "regulations-title": "法律与监管政策",
+                "regulations-text": "获取有关进入中国市场的最新法规信息。",
+                "regulations-link": "查看法规",
+                "contact-title": "联系我们",
+                "contact-text": "联系我们进行咨询，满怀信心地开始您进入中国市场的旅程。",
+                "contact-link": "立即联系"
+            }
+        };
+
+        function changeLanguage() {
+            const lang = document.getElementById("language-select").value;
+            const elements = Object.keys(translations[lang]);
+            
+            elements.forEach(id => {
+                if (Array.isArray(translations[lang][id])) {
+                    document.getElementById(id).innerHTML = translations[lang][id].map(item => `<li>${item}</li>`).join("");
+                } else {
+                    document.getElementById(id).innerHTML = translations[lang][id];
+                }
+            });
+        }
+    </script>
 </body>
 </html>
