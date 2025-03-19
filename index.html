@@ -21,22 +21,6 @@
             font-weight: bold;
             position: relative;
         }
-        .language-selector {
-            position: absolute;
-            top: 150px; /* 进一步下移，使其靠近内容区域 */
-            right: 20px;
-            background: white;
-            padding: 5px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        .language-selector select {
-            font-size: 16px;
-            padding: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            background: white;
-        }
         .container {
             width: 80%;
             margin: auto;
@@ -70,21 +54,28 @@
         .cta:hover {
             background-color: #005bb5;
         }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #e0e0e0;
+            margin-top: 50px;
+        }
+        .language-selector {
+            margin-top: 10px;
+        }
+        .language-selector select {
+            font-size: 16px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background: white;
+        }
     </style>
 </head>
 <body>
     <header>
         <span id="title">Your Trusted Partner for China Market Compliance & Supply Chain Solutions</span>
     </header>
-    
-    <div class="language-selector">
-        <select id="language-select" onchange="changeLanguage()">
-            <option value="en">English</option>
-            <option value="zh">中文</option>
-            <option value="el">Ελληνικά</option>
-            <option value="es">Español</option>
-        </select>
-    </div>
     
     <div class="container">
         <div class="section">
@@ -115,10 +106,34 @@
         </div>
     </div>
 
+    <footer>
+        <div class="language-selector">
+            <label for="language-select">Select Language:</label>
+            <select id="language-select" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="zh">中文</option>
+                <option value="el">Ελληνικά</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
+    </footer>
+
     <script>
+        const translations = {
+            "en": { "title": "Your Trusted Partner for China Market Compliance & Supply Chain Solutions", "why-title": "Why Choose Us?", "why-text": "We help European businesses navigate China’s regulatory landscape with ease, ensuring compliance and smooth market entry.", "services-title": "Our Services", "services-list": ["✔️ Regulatory & Compliance Consulting", "✔️ Supply Chain Solutions", "✔️ Market Entry Strategy", "✔️ Customized Business Advisory"], "regulations-title": "Legal & Regulatory Policies", "regulations-text": "Stay up to date with the latest regulations relevant to China market entry.", "regulations-link": "View Regulations", "contact-title": "Contact Us", "contact-text": "Get in touch for a consultation and start your journey into the Chinese market with confidence.", "contact-link": "Get in Touch" },
+            "zh": { "title": "您值得信赖的中国市场合规与供应链解决方案合作伙伴", "why-title": "为什么选择我们？", "why-text": "我们帮助欧洲企业轻松应对中国的监管环境，确保合规并顺利进入市场。", "services-title": "我们的服务", "services-list": ["✔️ 监管与合规咨询", "✔️ 供应链解决方案", "✔️ 市场进入策略", "✔️ 定制业务咨询"], "regulations-title": "法律与监管政策", "regulations-text": "获取有关进入中国市场的最新法规信息。", "regulations-link": "查看法规", "contact-title": "联系我们", "contact-text": "联系我们进行咨询，满怀信心地开始您进入中国市场的旅程。", "contact-link": "立即联系" }
+        };
+
         function changeLanguage() {
             const lang = document.getElementById("language-select").value;
-            alert("Language switched to: " + lang); // 目前只是一个占位功能，可用于动态翻译
+            const elements = Object.keys(translations[lang]);
+            elements.forEach(id => {
+                if (Array.isArray(translations[lang][id])) {
+                    document.getElementById(id).innerHTML = translations[lang][id].map(item => `<li>${item}</li>`).join("");
+                } else {
+                    document.getElementById(id).innerHTML = translations[lang][id];
+                }
+            });
         }
     </script>
 </body>
