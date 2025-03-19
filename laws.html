@@ -51,15 +51,22 @@
     </style>
     <script>
         async function fetchLaws() {
-            try {
-                let response = await fetch('https://www.cnca.gov.cn/zwxx/zcfg/index.html');
-                let text = await response.text();
-                document.getElementById("laws-container").innerHTML = "<p>Regulations loaded. Manual extraction required.</p>";
-            } catch (error) {
-                document.getElementById("laws-container").innerHTML = "<p>Failed to fetch regulations.</p>";
-            }
+        try {
+            let response = await fetch("laws.json"); // 读取 laws.json 文件
+            let data = await response.json(); // 解析 JSON 数据
+            let container = document.getElementById("laws-container");
+
+            container.innerHTML = ""; // 清空原来的内容
+            data.forEach(law => {
+                let item = document.createElement("p");
+                item.innerHTML = `<a href="${law.link}" target="_blank">${law.title}</a>`;
+                container.appendChild(item);
+            });
+        } catch (error) {
+            document.getElementById("laws-container").innerHTML = "<p>无法加载法规列表。</p>";
         }
-        window.onload = fetchLaws;
+    }
+    window.onload = fetchLaws;
     </script>
 </head>
 <body>
