@@ -1,98 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>China Regulatory Policies</title>
+    <title>法律法规 - 中英对照</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            margin: 0;
+            font-family: Arial, sans-serif;
+            margin: 20px;
             padding: 0;
-            background-color: #f5f5f7;
-            color: #1d1d1f;
+            background-color: #f9f9f9;
         }
-        header {
-            background: linear-gradient(135deg, #0a84ff, #0056b3);
-            color: white;
+        h1 {
             text-align: center;
-            padding: 60px 20px;
-            font-size: 36px;
-            font-weight: bold;
         }
-        .container {
-            width: 80%;
-            margin: auto;
-            padding: 50px 0;
-            text-align: left;
-        }
-        .section {
-            margin: 30px 0;
-            padding: 30px;
-            border-radius: 12px;
-            background: white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        .law-list {
-            list-style: none;
-            padding: 0;
-            font-size: 18px;
-            line-height: 2;
-        }
-        .law-list li a {
-            text-decoration: none;
-            color: #0071e3;
-            transition: color 0.3s ease-in-out;
-        }
-        .law-list li a:hover {
-            color: #005bb5;
-        }
-        .update-info {
-            text-align: left;
-            font-size: 16px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
-            color: #555;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #0071e3;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
         }
     </style>
     <script>
-        async function fetchLaws() {
+        async function translateText(text) {
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh&tl=en&dt=t&q=${encodeURIComponent(text)}`;
             try {
-                let response = await fetch("laws.json"); // 读取 laws.json
-                let data = await response.json(); // 解析 JSON 数据
-                
-                let container = document.getElementById("laws-container");
-                let lastUpdated = document.getElementById("last-updated");
-
-                // 显示最后更新时间
-                lastUpdated.innerHTML = `数据更新日期：${data.last_updated}`;
-
-                // 清空原来的内容
-                container.innerHTML = "";
-                data.laws.forEach(law => {
-                    let item = document.createElement("p");
-                    item.innerHTML = `<strong>${law.title}</strong> - ${law.date}`;
-                    container.appendChild(item);
-                });
+                const response = await fetch(url);
+                const result = await response.json();
+                return result[0].map(item => item[0]).join("");
             } catch (error) {
-                document.getElementById("laws-container").innerHTML = "<p>无法加载法规列表。</p>";
+                console.error("⚠️ 翻译失败:", error);
+                return "Translation failed";
             }
         }
-        window.onload = fetchLaws;
+
+        async function loadLaws() {
+            const table = document.getElementById("laws-table");
+            try {
+                const response = await fetch("laws.json");
+                const laws = await response.json();
+
+                for (let law of laws) {
+                    const translatedTitle = await translateText(law.title); // 翻译标题
+
+                    const row = `<tr>
+                        <td><a href="${law.link}" target="_blank">${law.title}</a></td>
+                        <td>${translatedTitle}</td>
+                        <td>${law.date}</td>
+                    </tr>`;
+                    table.innerHTML += row;
+                }
+            } catch (error) {
+                console.error("❌ 加载数据失败:", error);
+            }
+        }
+
+        window.onload = loadLaws;
     </script>
 </head>
 <body>
-    <header>
-        China Regulatory & Compliance Policies
-    </header>
-    
-    <div class="container">
-        <div class="section">
-            <h2>最新法规列表</h2>
-            <div id="laws-container">
-                <p>正在加载法规列表...</p>
-            </div>
-            <p id="last-updated" class="update-info">数据更新日期：加载中...</p>
-        </div>
-    </div>
+
+    <h1>法律法规 - 中英对照</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>中文法规</th>
+                <th>英文法规</th>
+                <th>发布日期</th>
+            </tr>
+        </thead>
+        <tbody id="laws-table"></tbody>
+    </table>
+
 </body>
 </html>
