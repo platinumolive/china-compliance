@@ -50,46 +50,47 @@
         }
 
         async function loadLaws() {
-            const table = document.getElementById("laws-table");
-            try {
-                const response = await fetch("laws.json");
-                if (!response.ok) {
-                    throw new Error(`HTTP 错误: ${response.status}`);
-                }
-
-                const text = await response.text();
-                console.log("✅ JSON 原始数据:", text);
-
-                const laws = JSON.parse(text);
-                if (!Array.isArray(laws)) {
-                    throw new Error("JSON 数据不是数组格式！");
-                }
-
-                console.log("✅ 解析成功 laws.json:", laws);
-
-                for (let law of laws) {
-                    console.log(`📖 读取法规: ${law.title}`);
-
-                    const row = `<tr>
-                        <td><a href="${law.link}" target="_blank">${law.title}</a></td>
-                        <td class="translated">⏳ 正在翻译...</td>
-                        <td>${law.date}</td>
-                    </tr>`;
-                    table.innerHTML += row;
-
-                    translateText(law.title).then(translatedTitle => {
-                        console.log(`🔹 翻译结果: ${translatedTitle}`);
-                        document.querySelectorAll(".translated").forEach((td, index) => {
-                            if (index === laws.indexOf(law)) td.textContent = translatedTitle;
-                        });
-                    });
-                }
-            } catch (error) {
-                console.error("❌ 加载数据失败:", error);
-            }
+    const table = document.getElementById("laws-table");
+    try {
+        const response = await fetch("laws.json");
+        if (!response.ok) {
+            throw new Error(`HTTP 错误: ${response.status}`);
         }
 
-        window.onload = loadLaws;
+        const text = await response.text();
+        console.log("✅ JSON 原始数据:", text);
+
+        const data = JSON.parse(text);
+        const laws = data.laws;  // 这里正确获取 laws 数组
+
+        if (!Array.isArray(laws)) {
+            throw new Error("JSON 数据不是数组格式！");
+        }
+
+        console.log("✅ 解析成功 laws.json:", laws);
+
+        for (let law of laws) {
+            console.log(`📖 读取法规: ${law.title}`);
+
+            const row = `<tr>
+                <td><a href="${law.link}" target="_blank">${law.title}</a></td>
+                <td class="translated">⏳ 正在翻译...</td>
+                <td>${law.date}</td>
+            </tr>`;
+            table.innerHTML += row;
+
+            translateText(law.title).then(translatedTitle => {
+                console.log(`🔹 翻译结果: ${translatedTitle}`);
+                document.querySelectorAll(".translated").forEach((td, index) => {
+                    if (index === laws.indexOf(law)) td.textContent = translatedTitle;
+                });
+            });
+        }
+    } catch (error) {
+        console.error("❌ 加载数据失败:", error);
+    }
+}
+window.onload = loadLaws;
     </script>
 </head>
 <body>
