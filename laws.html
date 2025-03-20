@@ -47,27 +47,56 @@
         }
 
         async function loadLaws() {
-            const table = document.getElementById("laws-table");
-            try {
-                const response = await fetch("laws.json");
-                const laws = await response.json();
-
-                for (let law of laws) {
-                    const translatedTitle = await translateText(law.title); // 翻译标题
-
-                    const row = `<tr>
-                        <td><a href="${law.link}" target="_blank">${law.title}</a></td>
-                        <td>${translatedTitle}</td>
-                        <td>${law.date}</td>
-                    </tr>`;
-                    table.innerHTML += row;
-                }
-            } catch (error) {
-                console.error("❌ 加载数据失败:", error);
-            }
+    const table = document.getElementById("laws-table");
+    try {
+        const response = await fetch("laws.json");
+        if (!response.ok) {
+            throw new Error(`HTTP 错误: ${response.status}`);
         }
+        
+        const laws = await response.json();
+        console.log("✅ 成功加载 laws.json:", laws);  // 🔍 输出 laws.json 数据
 
-        window.onload = loadLaws;
+        for (let law of laws) {
+            console.log(`📖 读取法规: ${law.title}`);
+
+            // 直接填充表格，不等待翻译，避免 API 卡住
+            const row = `<tr>
+                <td><a href="${law.link}" target="_blank">${law.title}</a></td>
+                <td class="translated">⏳ 正在翻译...</td>
+                <td>${law.date}</td>
+            </tr>`;
+            table.innerHTML += row;
+
+            // 异步翻译
+            translateText(law.title).then(translatedTitle => {
+                console.log(`🔹 翻译结果: ${translatedTitle}`);
+                document.querySelectorAll(".translated").forEach((td, index) => {
+                    if (index === laws.indexOf(law)) td.textContent = translatedTitle;
+                });
+            });
+        }
+    } catch (error) {
+        console.error("❌ 加载数据失败:", error);
+    }
+}
+
+async function translateText(text) {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`翻译 API 错误: ${response.status}`);
+        }
+        const result = await response.json();
+        return result[0].map(item => item[0]).join("");
+    } catch (error) {
+        console.error("⚠️ 翻译失败:", error);
+        return "Translation failed";
+    }
+}
+
+window.onload = loadLaws;
     </script>
 </head>
 <body>
